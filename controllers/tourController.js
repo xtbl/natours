@@ -14,6 +14,20 @@ exports.checkID = (req, res, next, val) => {
     next();
 };
 
+exports.checkBody = (req, res, next) => {
+    const { name, price } =  req.body;
+    console.log('checkBody');
+    console.log(name);
+    console.log(price);
+    if(!name || !price) {
+        return res.status(400).json({
+            status: 'fail',
+            message: 'Create Tour: Name and price required'
+        });
+    }
+    next();
+};
+
 exports.getAllTours = (req, res) => {
     res.status(200).json({
         status: 'success',
@@ -37,12 +51,14 @@ exports.getTour = (req, res) => {
 exports.createTour = (req, res) => {
     const tourIndex = tours.length - 1;
     const newId = tours[tourIndex].id + 1;
+    console.log('create tour');
+    console.log(req.body);
     console.log(newId);
     const newTour = Object.assign({id: newId}, req.body);
 
     tours.push(newTour);
 
-    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
+    fs.writeFile(`${__dirname}/../dev-data/data/tours-simple.json`, JSON.stringify(tours), (err) => {
         res.status(201).json({
             status: 'success',
             data: {
@@ -50,7 +66,6 @@ exports.createTour = (req, res) => {
             }
         });
     });
-    res.send('done');
 };
 
 exports.updateTour = (req, res) => {
